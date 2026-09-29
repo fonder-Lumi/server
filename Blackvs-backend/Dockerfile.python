@@ -1,0 +1,39 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install curl for healthcheck
+RUN apt-get update && apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first (layer cache)
+COPY python_api/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application source
+COPY python_api/ ./python_api/
+
+# Data directory
+RUN mkdir -p /app/data
+
+ENV PORT=8080
+ENV DATA_DIR=/app/data
+ENV AGENT_URL=http://127.0.0.1:9100
+ENV CORS_ORIGIN=*
+ENV METRICS_INTERVAL=5
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 8080
+
+# Run as non-root
+RUN groupadd -r blackvs && useradd -r -g blackvs blackvs
+RUN chown -R blackvs:blackvs /app
+USER blackvs
+
+CMD ["uvicorn", "python_api.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8080", \
+     "--workers", "2", \
+     "--proxy-headers", \
+     "--log-level", "info", \
+     "--access-log"]

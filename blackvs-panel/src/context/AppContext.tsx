@@ -262,30 +262,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const isProd = import.meta.env.PROD;
     const apiUrl = import.meta.env.VITE_API_URL || (isProd ? '' : 'http://127.0.0.1:8080');
-    const eventSource = new EventSource(`${apiUrl}/api/events`);
+    let es: EventSource | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
-    eventSource.onmessage = (event) => {
-      try {
-        const metrics = JSON.parse(event.data);
-        if (metrics.error) {
-          console.error('Telemetry error:', metrics.error);
-          return;
-        }
-        
-        setTelemetry((prev) => ({
-          ...prev,
-          ...metrics
-        }));
-      } catch (err) {
-        console.error('Failed to parse telemetry event:', err);
+    const connect = () => {
+      if (es) {
+        es.close();
+        es = null;
       }
+      es = new EventSource(`${apiUrl}/api/events`);
+
+      // Handle default messages and named 'metrics' events
+      const handleMetrics = (event: MessageEvent) => {
+        try {
+          const metrics = JSON.parse(event.data);
+          if (metrics.error) {
+            console.warn('[SSE] Agent error:', metrics.error);
+            return;
+          }
+          setTelemetry((prev) => ({ ...prev, ...metrics }));
+        } catch (err) {
+          console.error('[SSE] Failed to parse event:', err);
+        }
+      };
+
+      es.onmessage = handleMetrics;
+      es.addEventListener('metrics', handleMetrics);
+
+      es.onerror = () => {
+        console.warn('[SSE] Connection lost — reconnecting in 5s…');
+        es?.close();
+        es = null;
+        reconnectTimer = setTimeout(connect, 5000);
+      };
     };
 
-    eventSource.onerror = (err) => {
-      console.error('SSE Connection Error:', err);
-    };
+    connect();
 
-    return () => eventSource.close();
+    return () => {
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      es?.close();
+    };
   }, []);
 
   // Global keyboard shortcuts (Command+K for spotlight)

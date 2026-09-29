@@ -1,7 +1,34 @@
+# Node
 node_modules/
 dist/
-.env
 .DS_Store
-agent/target/
+
+# Environment secrets
+.env
+*.env.local
+
+# Rust build artifacts
+Blackvs-backend/agent/target/
+
+# Data / secrets
 blackvs_data/
+data/
 *.log
+*.pid
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db

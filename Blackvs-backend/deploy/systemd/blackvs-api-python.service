@@ -1,15 +1,34 @@
 [Unit]
-Description=BlackVS Python API
+Description=BlackVS Python API (FastAPI/uvicorn)
+Documentation=https://github.com/fonder-Lumi/server
 After=network.target blackvs-agent.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 Type=simple
-User=root
+User=www-data
+Group=www-data
 WorkingDirectory=/opt/blackvs
-ExecStart=/usr/bin/env uvicorn python_api.main:app --host 127.0.0.1 --port 8081
+EnvironmentFile=-/opt/blackvs/.env
+ExecStart=/opt/blackvs/venv/bin/uvicorn python_api.main:app \
+          --host 127.0.0.1 \
+          --port 8080 \
+          --workers 2 \
+          --proxy-headers \
+          --forwarded-allow-ips=127.0.0.1 \
+          --log-level info \
+          --access-log
 Restart=on-failure
-Environment=PORT=8081
-Environment=DATA_DIR=/opt/blackvs/data
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/opt/blackvs/data
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=blackvs-api
 
 [Install]
 WantedBy=multi-user.target

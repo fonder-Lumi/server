@@ -1,36 +1,59 @@
 version: '3.8'
 
 services:
-  backend:
+  # ── Rust privileged agent (runs on host, not in Docker) ──────────────────
+  # Note: The Rust agent MUST run on the host with root privileges to access
+  # systemd, disk info, etc. It is NOT containerized.
+  # Start it separately: sudo ./agent/target/release/blackvs-agent
+
+  # ── Python FastAPI backend ────────────────────────────────────────────────
+  api:
     build:
       context: ./Blackvs-backend
-    container_name: blackvs-backend
-    restart: always
+      dockerfile: Dockerfile.python
+    container_name: blackvs-api
+    restart: unless-stopped
     environment:
       - PORT=8080
       - CORS_ORIGIN=*
       - DATA_DIR=/app/data
       - AGENT_URL=http://host.docker.internal:9100
+      - METRICS_INTERVAL=5
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - blackvs_data:/app/data
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     networks:
       - blackvs_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
+  # ── React Panel (Nginx static + API proxy) ────────────────────────────────
   panel:
     build:
       context: ./blackvs-panel
+      dockerfile: Dockerfile
     container_name: blackvs-panel
-    restart: always
+    restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
-      - backend
+      api:
+        condition: service_healthy
     networks:
       - blackvs_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   blackvs_net:
@@ -38,3 +61,4 @@ networks:
 
 volumes:
   blackvs_data:
+    driver: local

@@ -1,15 +1,25 @@
 [Unit]
 Description=BlackVS privileged Linux server agent
+Documentation=https://github.com/fonder-Lumi/server
 After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 Type=simple
 ExecStart=/usr/local/bin/blackvs-agent
 Restart=always
-RestartSec=2
+RestartSec=3
 User=root
 PrivateTmp=true
 ProtectHome=false
+ProtectSystem=false
+AmbientCapabilities=CAP_NET_BIND_SERVICE CAP_SYS_ADMIN
+Environment=RUST_LOG=info
+Environment=AGENT_BIND=127.0.0.1:9100
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=blackvs-agent
 
 [Install]
 WantedBy=multi-user.target

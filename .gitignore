@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.DS_Store
+agent/target/
+blackvs_data/
+*.log

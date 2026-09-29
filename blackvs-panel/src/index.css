@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Default Obsidian Dark */
+    --app-bg: #09090b;
+    --app-fg: #f4f4f5;
+    --app-fg-muted: #a1a1aa;
+    --app-fg-subtle: #71717a;
+    --app-border: rgba(255, 255, 255, 0.08);
+    --app-border-hover: rgba(255, 255, 255, 0.16);
+    --app-glass: rgba(18, 18, 22, 0.7);
+    --app-glass-subtle: rgba(24, 24, 28, 0.45);
+    --app-glass-dropdown: rgba(15, 15, 18, 0.94);
+    --app-card-bg: rgba(255, 255, 255, 0.03);
+    --app-input-bg: rgba(255, 255, 255, 0.04);
+    --app-btn-primary-bg: #ffffff;
+    --app-btn-primary-fg: #000000;
+  }
+
+  /* Pure Midnight Black (OLED) */
+  html[data-theme='midnight'] {
+    --app-bg: #000000;
+    --app-fg: #ffffff;
+    --app-fg-muted: #9ca3af;
+    --app-fg-subtle: #6b7280;
+    --app-border: rgba(255, 255, 255, 0.12);
+    --app-border-hover: rgba(255, 255, 255, 0.24);
+    --app-glass: rgba(10, 10, 10, 0.85);
+    --app-glass-subtle: rgba(16, 16, 16, 0.6);
+    --app-glass-dropdown: rgba(8, 8, 8, 0.98);
+    --app-card-bg: rgba(255, 255, 255, 0.04);
+    --app-input-bg: rgba(255, 255, 255, 0.06);
+    --app-btn-primary-bg: #ffffff;
+    --app-btn-primary-fg: #000000;
+  }
+
+  /* Graphite Slate (Apple Space Gray) */
+  html[data-theme='slate'] {
+    --app-bg: #0f172a;
+    --app-fg: #f8fafc;
+    --app-fg-muted: #94a3b8;
+    --app-fg-subtle: #64748b;
+    --app-border: rgba(255, 255, 255, 0.1);
+    --app-border-hover: rgba(255, 255, 255, 0.2);
+    --app-glass: rgba(30, 41, 59, 0.65);
+    --app-glass-subtle: rgba(15, 23, 42, 0.5);
+    --app-glass-dropdown: rgba(15, 23, 42, 0.95);
+    --app-card-bg: rgba(255, 255, 255, 0.04);
+    --app-input-bg: rgba(255, 255, 255, 0.05);
+    --app-btn-primary-bg: #38bdf8;
+    --app-btn-primary-fg: #030712;
+  }
+
+  /* Apple Light Titanium Theme */
+  html[data-theme='light'] {
+    --app-bg: #f8f9fa;
+    --app-fg: #0f172a;
+    --app-fg-muted: #475569;
+    --app-fg-subtle: #64748b;
+    --app-border: rgba(0, 0, 0, 0.09);
+    --app-border-hover: rgba(0, 0, 0, 0.18);
+    --app-glass: rgba(255, 255, 255, 0.85);
+    --app-glass-subtle: rgba(241, 245, 249, 0.7);
+    --app-glass-dropdown: rgba(255, 255, 255, 0.98);
+    --app-card-bg: rgba(255, 255, 255, 0.9);
+    --app-input-bg: rgba(0, 0, 0, 0.04);
+    --app-btn-primary-bg: #09090b;
+    --app-btn-primary-fg: #ffffff;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--app-bg);
+    color: var(--app-fg);
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+}
+
+/* Custom subtle scrollbars adapted to theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--app-border);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--app-border-hover);
+}
+
+/* Glassmorphism system */
+.glass-panel {
+  background: var(--app-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--app-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-panel-subtle {
+  background: var(--app-glass-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--app-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-dropdown {
+  background: var(--app-glass-dropdown);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--app-border);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+}

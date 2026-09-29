@@ -1,0 +1,18 @@
+[Unit]
+Description=BlackVS Node API
+After=network.target blackvs-agent.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/blackvs
+EnvironmentFile=-/opt/blackvs/.env
+ExecStart=/usr/bin/node /opt/blackvs/dist/server.js
+Restart=always
+RestartSec=2
+User=www-data
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=false
+
+[Install]
+WantedBy=multi-user.target

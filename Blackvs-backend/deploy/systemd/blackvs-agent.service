@@ -1,0 +1,15 @@
+[Unit]
+Description=BlackVS privileged Linux server agent
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/blackvs-agent
+Restart=always
+RestartSec=2
+User=root
+PrivateTmp=true
+ProtectHome=false
+
+[Install]
+WantedBy=multi-user.target

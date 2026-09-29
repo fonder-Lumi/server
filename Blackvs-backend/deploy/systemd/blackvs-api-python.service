@@ -1,0 +1,15 @@
+[Unit]
+Description=BlackVS Python API
+After=network.target blackvs-agent.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/blackvs
+ExecStart=/usr/bin/env uvicorn python_api.main:app --host 127.0.0.1 --port 8081
+Restart=on-failure
+Environment=PORT=8081
+Environment=DATA_DIR=/opt/blackvs/data
+
+[Install]
+WantedBy=multi-user.target

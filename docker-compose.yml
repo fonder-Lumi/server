@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Blackvs-backend
+    container_name: blackvs-backend
+    restart: always
+    environment:
+      - PORT=8080
+      - CORS_ORIGIN=*
+      - DATA_DIR=/app/data
+      - AGENT_URL=http://host.docker.internal:9100
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - blackvs_data:/app/data
+    ports:
+      - "8080:8080"
+    networks:
+      - blackvs_net
+
+  panel:
+    build:
+      context: ./blackvs-panel
+    container_name: blackvs-panel
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - blackvs_net
+
+networks:
+  blackvs_net:
+    driver: bridge
+
+volumes:
+  blackvs_data:

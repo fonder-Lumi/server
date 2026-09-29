@@ -1,0 +1,7 @@
+{
+  "name": "BlackVS — Modern Cloud Hosting Control Panel",
+  "description": "Apple-inspired minimalist cloud hosting control panel with domain management, databases, file manager, SSL, theme switcher, and server telemetry.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
